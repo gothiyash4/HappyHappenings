@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="#F5F7FC">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Happy Happenings"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="#172B4D"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Vendor Dashboard"
+        android:textSize="14sp"
+        android:textColor="#7B8798"
+        android:layout_marginTop="5dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Welcome, Vendor!"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="#172B4D"
+        android:layout_marginTop="35dp"
+        android:layout_marginBottom="20dp"/>
+
+    <Button
+        android:id="@+id/addService"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:text="Add Service"
+        android:textColor="#FFFFFF"
+        app:backgroundTint="@null"
+        android:background="@drawable/blue_button_bg"
+        android:backgroundTint="@null"/>
+
+    <Button
+        android:id="@+id/myServices"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:text="My Services"
+        android:textColor="#FFFFFF"
+        android:layout_marginTop="12dp"
+        app:backgroundTint="@null"
+        android:background="@drawable/blue_button_bg"
+        android:backgroundTint="@null"/>
+
+    <Button
+        android:id="@+id/profile"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:text="My Profile"
+        android:textColor="#FFFFFF"
+        android:layout_marginTop="12dp"
+        app:backgroundTint="@null"
+        android:background="@drawable/blue_button_bg"
+        android:backgroundTint="@null"/>
+
+    <Button
+        android:id="@+id/logout"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:text="Logout"
+        android:textColor="#FFFFFF"
+        android:layout_marginTop="30dp"
+        app:backgroundTint="@null"
+        android:background="@drawable/blue_button_bg"
+        android:backgroundTint="@null"/>
+
+</LinearLayout>

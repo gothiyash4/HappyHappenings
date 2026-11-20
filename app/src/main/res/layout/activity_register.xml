@@ -132,7 +132,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginTop="8dp"
-                android:layout_marginBottom="22dp">
+                android:layout_marginBottom="15dp">
 
                 <RadioButton
                     android:id="@+id/user"
@@ -154,6 +154,32 @@
                     android:buttonTint="#2563EB"/>
 
             </RadioGroup>
+
+            <LinearLayout
+                android:id="@+id/vendorCategoryLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:layout_marginBottom="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Select Vendor Category"
+                    android:textColor="#344054"
+                    android:textStyle="bold"
+                    android:textSize="13sp"/>
+
+                <Spinner
+                    android:id="@+id/vendorCategory"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:background="@drawable/register_input_bg"
+                    android:padding="10dp"
+                    android:layout_marginTop="7dp"/>
+
+            </LinearLayout>
 
             <Button
                 android:id="@+id/register"

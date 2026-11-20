@@ -1,17 +1,23 @@
 package com.example.happyhappenings;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,8 +27,14 @@ public class RegisterActivity extends AppCompatActivity {
     RadioGroup roleGroup;
     Button register;
 
+    Spinner vendorCategory;
+    LinearLayout vendorCategoryLayout;
+
     FirebaseAuth auth;
     FirebaseFirestore db;
+
+    ArrayList<String> categoryNames = new ArrayList<>();
+    ArrayList<String> categoryIds = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,88 +47,216 @@ public class RegisterActivity extends AppCompatActivity {
         roleGroup = findViewById(R.id.roleGroup);
         register = findViewById(R.id.register);
 
+        vendorCategory = findViewById(R.id.vendorCategory);
+        vendorCategoryLayout = findViewById(R.id.vendorCategoryLayout);
+
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        register.setOnClickListener(v -> {
+        loadCategories();
 
-            String userName = name.getText().toString().trim();
-            String userEmail = email.getText().toString().trim();
-            String userPassword = password.getText().toString().trim();
+        roleGroup.setOnCheckedChangeListener((group, checkedId) -> {
 
-            int selectedRole = roleGroup.getCheckedRadioButtonId();
-
-            if (userName.isEmpty() || userEmail.isEmpty()
-                    || userPassword.isEmpty() || selectedRole == -1) {
-
-                Toast.makeText(this, "Please fill all details",
-                        Toast.LENGTH_SHORT).show();
-                return;
+            if (checkedId == R.id.vendor) {
+                vendorCategoryLayout.setVisibility(View.VISIBLE);
+            } else {
+                vendorCategoryLayout.setVisibility(View.GONE);
             }
+        });
 
-            if (userPassword.length() < 6) {
-                Toast.makeText(this, "Password must be at least 6 characters",
-                        Toast.LENGTH_SHORT).show();
-                return;
-            }
+        register.setOnClickListener(v -> registerUser());
+    }
 
-            String role = selectedRole == R.id.user ? "user" : "vendor";
+    private void loadCategories() {
 
-            register.setEnabled(false);
+        db.collection("categories")
+                .get()
+                .addOnSuccessListener(result -> {
 
-            auth.createUserWithEmailAndPassword(userEmail, userPassword)
-                    .addOnCompleteListener(task -> {
+                    categoryNames.clear();
+                    categoryIds.clear();
 
-                        if (task.isSuccessful()) {
+                    if (result != null && !result.isEmpty()) {
+                        for (DocumentSnapshot document : result.getDocuments()) {
 
-                            FirebaseUser user = auth.getCurrentUser();
-                            if (user != null) {
-                                String uid = user.getUid();
+                            String categoryName = document.getString("name");
 
-                                Map<String, Object> userData = new HashMap<>();
-                                userData.put("uid", uid);
-                                userData.put("name", userName);
-                                userData.put("email", userEmail);
-                                userData.put("role", role);
+                            if (categoryName == null ||
+                                    categoryName.trim().isEmpty()) {
 
-                                db.collection("users")
-                                        .document(uid)
-                                        .set(userData)
-                                        .addOnSuccessListener(aVoid -> {
-
-                                            Toast.makeText(this,
-                                                    "Registration Successful",
-                                                    Toast.LENGTH_SHORT).show();
-
-                                            name.setText("");
-                                            email.setText("");
-                                            password.setText("");
-                                            roleGroup.check(R.id.user);
-
-                                            register.setEnabled(true);
-                                        })
-                                        .addOnFailureListener(e -> {
-
-                                            Toast.makeText(this,
-                                                    "Database Error: " + e.getMessage(),
-                                                    Toast.LENGTH_LONG).show();
-
-                                            register.setEnabled(true);
-                                        });
-                            } else {
-                                register.setEnabled(true);
+                                categoryName = document.getId();
                             }
 
+                            categoryNames.add(categoryName);
+                            categoryIds.add(document.getId());
+                        }
+                    }
+
+                    if (categoryNames.isEmpty()) {
+                        populateDefaultCategories();
+                    } else {
+                        updateSpinnerAdapter();
+                    }
+                })
+                .addOnFailureListener(e -> populateDefaultCategories());
+    }
+
+    private void populateDefaultCategories() {
+        categoryNames.clear();
+        categoryIds.clear();
+
+        categoryNames.add("Catering");
+        categoryIds.add("catering");
+
+        categoryNames.add("Dresses");
+        categoryIds.add("dresses");
+
+        categoryNames.add("Photography");
+        categoryIds.add("photography");
+
+        updateSpinnerAdapter();
+    }
+
+    private void updateSpinnerAdapter() {
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_spinner_item,
+                categoryNames
+        );
+
+        adapter.setDropDownViewResource(
+                android.R.layout.simple_spinner_dropdown_item
+        );
+
+        vendorCategory.setAdapter(adapter);
+    }
+
+    private void registerUser() {
+
+        String userName = name.getText().toString().trim();
+        String userEmail = email.getText().toString().trim();
+        String userPassword = password.getText().toString().trim();
+
+        int selectedRole = roleGroup.getCheckedRadioButtonId();
+
+        if (userName.isEmpty() || userEmail.isEmpty()
+                || userPassword.isEmpty() || selectedRole == -1) {
+
+            Toast.makeText(this,
+                    "Please fill all details",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (userPassword.length() < 6) {
+
+            Toast.makeText(this,
+                    "Password must be at least 6 characters",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String role = selectedRole == R.id.user ? "user" : "vendor";
+
+        String selectedCategory = "";
+        String selectedCategoryId = "";
+
+        if (role.equals("vendor")) {
+
+            int position = vendorCategory.getSelectedItemPosition();
+
+            if (categoryNames.isEmpty() || position < 0
+                    || position >= categoryNames.size()) {
+
+                Toast.makeText(this,
+                        "Please select a valid category",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            selectedCategory = categoryNames.get(position);
+            selectedCategoryId = categoryIds.get(position);
+        }
+
+        String finalCategory = selectedCategory;
+        String finalCategoryId = selectedCategoryId;
+
+        register.setEnabled(false);
+
+        auth.createUserWithEmailAndPassword(userEmail, userPassword)
+                .addOnCompleteListener(task -> {
+
+                    if (task.isSuccessful()) {
+
+                        FirebaseUser user = auth.getCurrentUser();
+
+                        if (user != null) {
+
+                            String uid = user.getUid();
+
+                            Map<String, Object> userData = new HashMap<>();
+
+                            userData.put("uid", uid);
+                            userData.put("name", userName);
+                            userData.put("email", userEmail);
+                            userData.put("role", role);
+
+                            if (role.equals("vendor")) {
+
+                                userData.put("category", finalCategory);
+                                userData.put("categoryId", finalCategoryId);
+                            }
+
+                            db.collection("users")
+                                    .document(uid)
+                                    .set(userData)
+                                    .addOnSuccessListener(aVoid -> {
+
+                                        if (role.equals("vendor")) {
+                                            db.collection("vendors").document(uid).set(userData);
+                                        }
+
+                                        Toast.makeText(this,
+                                                "Registration Successful",
+                                                Toast.LENGTH_SHORT).show();
+
+                                        name.setText("");
+                                        email.setText("");
+                                        password.setText("");
+
+                                        roleGroup.check(R.id.user);
+
+                                        if (!categoryNames.isEmpty()) {
+                                            vendorCategory.setSelection(0);
+                                        }
+
+                                        register.setEnabled(true);
+                                    })
+                                    .addOnFailureListener(e -> {
+
+                                        Toast.makeText(this,
+                                                "Database Error: " + e.getMessage(),
+                                                Toast.LENGTH_LONG).show();
+
+                                        register.setEnabled(true);
+                                    });
+
                         } else {
-
-                            String errorMsg = task.getException() != null ? task.getException().getMessage() : "Registration failed";
-                            Toast.makeText(this,
-                                    errorMsg,
-                                    Toast.LENGTH_LONG).show();
-
                             register.setEnabled(true);
                         }
-                    });
-        });
+
+                    } else {
+
+                        String errorMsg = task.getException() != null
+                                ? task.getException().getMessage()
+                                : "Registration failed";
+
+                        Toast.makeText(this,
+                                errorMsg,
+                                Toast.LENGTH_LONG).show();
+
+                        register.setEnabled(true);
+                    }
+                });
     }
 }

@@ -81,28 +81,35 @@ public class UserDashboardActivity extends AppCompatActivity {
                             continue;
                         }
 
+                        String categoryId = document.getId();
                         String name = document.getString("name");
 
                         if (name == null || name.trim().isEmpty()) {
-                            name = document.getId();
+                            name = categoryId;
                         }
 
                         name = name.substring(0, 1).toUpperCase()
                                 + name.substring(1);
 
-                        addCategoryCard(name);
+                        addCategoryCard(name, categoryId);
                     }
 
                     if (categoryList.getChildCount() == 0) {
-                        showMessage("No categories available");
+                        addCategoryCard("Catering", "catering");
+                        addCategoryCard("Dresses", "dresses");
+                        addCategoryCard("Photography", "photography");
                     }
                 })
-                .addOnFailureListener(e ->
-                        showMessage("Error: " + e.getMessage())
-                );
+                .addOnFailureListener(e -> {
+                    if (categoryList.getChildCount() == 0) {
+                        addCategoryCard("Catering", "catering");
+                        addCategoryCard("Dresses", "dresses");
+                        addCategoryCard("Photography", "photography");
+                    }
+                });
     }
 
-    private void addCategoryCard(String name) {
+    private void addCategoryCard(String name, String categoryId) {
 
         LinearLayout card = new LinearLayout(this);
         card.setOrientation(LinearLayout.HORIZONTAL);
@@ -178,10 +185,12 @@ public class UserDashboardActivity extends AppCompatActivity {
         card.addView(details);
         card.addView(arrow);
 
-        card.setOnClickListener(v ->
-                Toast.makeText(this, name + " selected",
-                        Toast.LENGTH_SHORT).show()
-        );
+        card.setOnClickListener(v -> {
+            Intent intent = new Intent(this, VendorListActivity.class);
+            intent.putExtra("category_name", name);
+            intent.putExtra("category_id", categoryId);
+            startActivity(intent);
+        });
 
         categoryList.addView(card);
     }

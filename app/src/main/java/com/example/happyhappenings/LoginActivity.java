@@ -34,6 +34,10 @@ public class LoginActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
+        if (auth.getCurrentUser() != null) {
+            checkUserRoleAndRedirect(auth.getCurrentUser().getUid());
+        }
+
         login.setOnClickListener(v -> {
 
             String userEmail = email.getText().toString().trim();
@@ -50,7 +54,7 @@ public class LoginActivity extends AppCompatActivity {
             auth.signInWithEmailAndPassword(userEmail, userPassword)
                     .addOnCompleteListener(task -> {
 
-                        if (task.isSuccessful()) {
+                        if (task.isSuccessful() && auth.getCurrentUser() != null) {
 
                             String uid = auth.getCurrentUser().getUid();
 
@@ -115,5 +119,44 @@ public class LoginActivity extends AppCompatActivity {
         signup.setOnClickListener(v -> {
             startActivity(new Intent(this, RegisterActivity.class));
         });
+    }
+
+    private void checkUserRoleAndRedirect(String uid) {
+
+        login.setEnabled(false);
+
+        db.collection("users")
+                .document(uid)
+                .get()
+                .addOnSuccessListener(document -> {
+
+                    if (document.exists()) {
+
+                        String role = document.getString("role");
+
+                        Intent intent;
+
+                        if ("user".equals(role)) {
+                            intent = new Intent(this, UserDashboardActivity.class);
+                        } else if ("vendor".equals(role)) {
+                            intent = new Intent(this, VendorDashboardActivity.class);
+                        } else {
+                            login.setEnabled(true);
+                            return;
+                        }
+
+                        intent.setFlags(
+                                Intent.FLAG_ACTIVITY_NEW_TASK |
+                                Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        );
+
+                        startActivity(intent);
+                        finish();
+
+                    } else {
+                        login.setEnabled(true);
+                    }
+                })
+                .addOnFailureListener(e -> login.setEnabled(true));
     }
 }

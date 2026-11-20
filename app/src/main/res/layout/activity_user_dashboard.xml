@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="24dp"
+    android:padding="20dp"
     android:background="#F5F7FC">
 
     <TextView
@@ -19,73 +19,100 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="User Dashboard"
-        android:textSize="14sp"
+        android:text="Your event, our responsibility"
+        android:textSize="13sp"
         android:textColor="#7B8798"
-        android:layout_marginTop="5dp"/>
+        android:layout_marginTop="4dp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Welcome, User!"
-        android:textSize="22sp"
+        android:text="Welcome!"
+        android:textSize="26sp"
         android:textStyle="bold"
         android:textColor="#172B4D"
-        android:layout_marginTop="35dp"
-        android:layout_marginBottom="20dp"/>
+        android:layout_marginTop="30dp"/>
 
-    <Button
-        android:id="@+id/catering"
-        android:layout_width="match_parent"
-        android:layout_height="65dp"
-        android:text="Catering"
-        android:textColor="#FFFFFF"
-        app:backgroundTint="@null"
-        android:background="@drawable/blue_button_bg"
-        android:backgroundTint="@null"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Make your special moments memorable."
+        android:textSize="14sp"
+        android:textColor="#7B8798"
+        android:layout_marginTop="6dp"/>
 
-    <Button
-        android:id="@+id/dresses"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="65dp"
-        android:text="Dresses"
-        android:textColor="#FFFFFF"
-        android:layout_marginTop="12dp"
-        app:backgroundTint="@null"
-        android:background="@drawable/blue_button_bg"
-        android:backgroundTint="@null"/>
+        android:layout_height="125dp"
+        android:orientation="vertical"
+        android:gravity="center_vertical"
+        android:padding="18dp"
+        android:layout_marginTop="25dp"
+        android:background="@drawable/blue_button_bg">
 
-    <Button
-        android:id="@+id/photography"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Plan Your Special Event"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Find the perfect services for your event."
+            android:textSize="13sp"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="8dp"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Explore Categories"
+        android:textSize="19sp"
+        android:textStyle="bold"
+        android:textColor="#172B4D"
+        android:layout_marginTop="25dp"
+        android:layout_marginBottom="15dp"/>
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="65dp"
-        android:text="Photography"
-        android:textColor="#FFFFFF"
-        android:layout_marginTop="12dp"
-        app:backgroundTint="@null"
-        android:background="@drawable/blue_button_bg"
-        android:backgroundTint="@null"/>
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:id="@+id/categoryList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"/>
+
+    </ScrollView>
 
     <Button
         android:id="@+id/bookings"
         android:layout_width="match_parent"
-        android:layout_height="65dp"
+        android:layout_height="55dp"
         android:text="My Bookings"
         android:textColor="#FFFFFF"
-        android:layout_marginTop="12dp"
-        app:backgroundTint="@null"
+        android:textStyle="bold"
         android:background="@drawable/blue_button_bg"
-        android:backgroundTint="@null"/>
+        android:backgroundTint="@null"
+        app:backgroundTint="@null"/>
 
     <Button
         android:id="@+id/logout"
         android:layout_width="match_parent"
-        android:layout_height="54dp"
+        android:layout_height="50dp"
         android:text="Logout"
         android:textColor="#FFFFFF"
-        android:layout_marginTop="30dp"
-        app:backgroundTint="@null"
+        android:textStyle="bold"
+        android:layout_marginTop="12dp"
         android:background="@drawable/blue_button_bg"
-        android:backgroundTint="@null"/>
+        android:backgroundTint="@null"
+        app:backgroundTint="@null"/>
 
 </LinearLayout>

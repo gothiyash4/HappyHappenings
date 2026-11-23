@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F7FC"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <!-- Top Header Bar -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="20dp">
+
+            <TextView
+                android:id="@+id/backButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:text="←"
+                android:textSize="24sp"
+                android:textColor="#172B4D"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginStart="12dp">
+
+                <TextView
+                    android:id="@+id/pageTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Add Service"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:textColor="#172B4D"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Fill in your service details"
+                    android:textSize="13sp"
+                    android:textColor="#7B8798"
+                    android:layout_marginTop="2dp"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Form Card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp"
+            android:background="@drawable/register_card_bg">
+
+            <!-- Main Category -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Main Category"
+                android:textColor="#344054"
+                android:textStyle="bold"
+                android:textSize="13sp"/>
+
+            <Spinner
+                android:id="@+id/mainCategorySpinner"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:background="@drawable/register_input_bg"
+                android:padding="10dp"
+                android:layout_marginTop="7dp"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- Sub Category / Service Type -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sub-Category / Service Type"
+                android:textColor="#344054"
+                android:textStyle="bold"
+                android:textSize="13sp"/>
+
+            <Spinner
+                android:id="@+id/subCategorySpinner"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:background="@drawable/register_input_bg"
+                android:padding="10dp"
+                android:layout_marginTop="7dp"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- Service Title -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Service Title"
+                android:textColor="#344054"
+                android:textStyle="bold"
+                android:textSize="13sp"/>
+
+            <EditText
+                android:id="@+id/serviceTitle"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:hint="e.g. High Power DJ &amp; Sound Setup"
+                android:padding="14dp"
+                android:textSize="14sp"
+                android:inputType="textCapWords"
+                android:background="@drawable/register_input_bg"
+                android:layout_marginTop="7dp"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- Service Price -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Service Price (₹)"
+                android:textColor="#344054"
+                android:textStyle="bold"
+                android:textSize="13sp"/>
+
+            <EditText
+                android:id="@+id/servicePrice"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:hint="e.g. 11999"
+                android:padding="14dp"
+                android:textSize="14sp"
+                android:inputType="numberDecimal"
+                android:background="@drawable/register_input_bg"
+                android:layout_marginTop="7dp"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- Service Description -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Service Description"
+                android:textColor="#344054"
+                android:textStyle="bold"
+                android:textSize="13sp"/>
+
+            <EditText
+                android:id="@+id/serviceDescription"
+                android:layout_width="match_parent"
+                android:layout_height="110dp"
+                android:hint="Describe what is included in this service package..."
+                android:padding="14dp"
+                android:textSize="14sp"
+                android:gravity="top|start"
+                android:inputType="textMultiLine"
+                android:background="@drawable/register_input_bg"
+                android:layout_marginTop="7dp"
+                android:layout_marginBottom="24dp"/>
+
+            <!-- Save / Update Button -->
+            <Button
+                android:id="@+id/saveServiceButton"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:text="Save Service"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                app:backgroundTint="@null"
+                android:background="@drawable/blue_button_bg"
+                android:backgroundTint="@null"/>
+
+            <!-- Delete Button (Shown only when editing) -->
+            <Button
+                android:id="@+id/deleteServiceButton"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="Delete Service"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#DC2626"
+                android:visibility="gone"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/register_input_bg"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

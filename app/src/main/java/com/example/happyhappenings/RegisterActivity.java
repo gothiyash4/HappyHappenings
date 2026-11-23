@@ -8,6 +8,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -50,6 +51,8 @@ public class RegisterActivity extends AppCompatActivity {
         vendorCategory = findViewById(R.id.vendorCategory);
         vendorCategoryLayout = findViewById(R.id.vendorCategoryLayout);
 
+        TextView loginLink = findViewById(R.id.loginLink);
+
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
@@ -65,17 +68,20 @@ public class RegisterActivity extends AppCompatActivity {
         });
 
         register.setOnClickListener(v -> registerUser());
+
+        loginLink.setOnClickListener(v -> {
+            startActivity(new android.content.Intent(this, LoginActivity.class));
+            finish();
+        });
     }
 
     private void loadCategories() {
 
+        populateDefaultCategories();
+
         db.collection("categories")
                 .get()
                 .addOnSuccessListener(result -> {
-
-                    categoryNames.clear();
-                    categoryIds.clear();
-
                     if (result != null && !result.isEmpty()) {
                         for (DocumentSnapshot document : result.getDocuments()) {
 
@@ -87,23 +93,26 @@ public class RegisterActivity extends AppCompatActivity {
                                 categoryName = document.getId();
                             }
 
-                            categoryNames.add(categoryName);
-                            categoryIds.add(document.getId());
-                        }
-                    }
+                            categoryName = categoryName.substring(0, 1).toUpperCase()
+                                    + categoryName.substring(1);
 
-                    if (categoryNames.isEmpty()) {
-                        populateDefaultCategories();
-                    } else {
+                            if (!categoryNames.contains(categoryName)) {
+                                categoryNames.add(categoryName);
+                                categoryIds.add(document.getId());
+                            }
+                        }
                         updateSpinnerAdapter();
                     }
                 })
-                .addOnFailureListener(e -> populateDefaultCategories());
+                .addOnFailureListener(e -> updateSpinnerAdapter());
     }
 
     private void populateDefaultCategories() {
         categoryNames.clear();
         categoryIds.clear();
+
+        categoryNames.add("Decoration");
+        categoryIds.add("decoration");
 
         categoryNames.add("Catering");
         categoryIds.add("catering");
@@ -113,6 +122,18 @@ public class RegisterActivity extends AppCompatActivity {
 
         categoryNames.add("Photography");
         categoryIds.add("photography");
+
+        categoryNames.add("Music & DJ");
+        categoryIds.add("music_dj");
+
+        categoryNames.add("Venues");
+        categoryIds.add("venues");
+
+        categoryNames.add("Makeup & Hair");
+        categoryIds.add("makeup_hair");
+
+        categoryNames.add("Invitation Cards");
+        categoryIds.add("invitation_cards");
 
         updateSpinnerAdapter();
     }

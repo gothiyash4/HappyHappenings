@@ -8,76 +8,41 @@
     android:padding="20dp"
     android:background="#F5F7FC">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Happy Happenings"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:textColor="#172B4D"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Your event, our responsibility"
-        android:textSize="13sp"
-        android:textColor="#7B8798"
-        android:layout_marginTop="4dp"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Welcome!"
-        android:textSize="26sp"
-        android:textStyle="bold"
-        android:textColor="#172B4D"
-        android:layout_marginTop="30dp"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Make your special moments memorable."
-        android:textSize="14sp"
-        android:textColor="#7B8798"
-        android:layout_marginTop="6dp"/>
-
+    <!-- Header Section -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="125dp"
-        android:orientation="vertical"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:padding="18dp"
-        android:layout_marginTop="25dp"
-        android:background="@drawable/blue_button_bg">
+        android:layout_marginBottom="16dp">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Plan Your Special Event"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="#FFFFFF"/>
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Find the perfect services for your event."
-            android:textSize="13sp"
-            android:textColor="#FFFFFF"
-            android:layout_marginTop="8dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Explore Categories"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="#172B4D"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Find the perfect services for your event"
+                android:textSize="13sp"
+                android:textColor="#7B8798"
+                android:layout_marginTop="2dp"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Explore Categories"
-        android:textSize="19sp"
-        android:textStyle="bold"
-        android:textColor="#172B4D"
-        android:layout_marginTop="25dp"
-        android:layout_marginBottom="15dp"/>
-
+    <!-- Categories Scroll Area -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -92,27 +57,39 @@
 
     </ScrollView>
 
-    <Button
-        android:id="@+id/bookings"
+    <!-- Bottom Action Buttons -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:text="My Bookings"
-        android:textColor="#FFFFFF"
-        android:textStyle="bold"
-        android:background="@drawable/blue_button_bg"
-        android:backgroundTint="@null"
-        app:backgroundTint="@null"/>
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="12dp">
 
-    <Button
-        android:id="@+id/logout"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="Logout"
-        android:textColor="#FFFFFF"
-        android:textStyle="bold"
-        android:layout_marginTop="12dp"
-        android:background="@drawable/blue_button_bg"
-        android:backgroundTint="@null"
-        app:backgroundTint="@null"/>
+        <Button
+            android:id="@+id/bookings"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:text="My Bookings"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/blue_button_bg"
+            android:backgroundTint="@null"
+            app:backgroundTint="@null"/>
+
+        <Button
+            android:id="@+id/logout"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:text="Logout"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:layout_marginStart="6dp"
+            android:background="@drawable/blue_button_bg"
+            android:backgroundTint="@null"
+            app:backgroundTint="@null"/>
+
+    </LinearLayout>
 
 </LinearLayout>

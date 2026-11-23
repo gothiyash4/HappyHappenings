@@ -194,13 +194,27 @@
                 android:backgroundTint="@null"/>
 
             <TextView
+                android:id="@+id/loginLink"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Already have an account? Log In"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#2563EB"
+                android:gravity="center"
+                android:padding="10dp"
+                android:layout_marginTop="12dp"
+                android:clickable="true"
+                android:focusable="true"/>
+
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="By creating an account, you agree to our Terms &amp; Privacy Policy."
                 android:textSize="11sp"
                 android:textColor="#8993A4"
                 android:gravity="center"
-                android:layout_marginTop="16dp"/>
+                android:layout_marginTop="12dp"/>
 
         </LinearLayout>
 

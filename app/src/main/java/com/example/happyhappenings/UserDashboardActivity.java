@@ -6,6 +6,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -57,56 +58,67 @@ public class UserDashboardActivity extends AppCompatActivity {
 
     private void loadCategories() {
 
+        categoryList.removeAllViews();
+        populateDefaultCategoryCards();
+
         FirebaseFirestore.getInstance()
                 .collection("categories")
                 .get()
                 .addOnSuccessListener(result -> {
+                    if (result != null && !result.isEmpty()) {
+                        for (DocumentSnapshot document : result.getDocuments()) {
 
-                    categoryList.removeAllViews();
+                            Boolean status = document.getBoolean("status");
+                            if (Boolean.FALSE.equals(status)) {
+                                continue;
+                            }
 
-                    ArrayList<DocumentSnapshot> documents =
-                            new ArrayList<>(result.getDocuments());
+                            String categoryId = document.getId();
+                            String name = document.getString("name");
 
-                    Collections.sort(documents,
-                            Comparator.comparing(
-                                    document -> document.getId(),
-                                    String.CASE_INSENSITIVE_ORDER
-                            ));
+                            if (name == null || name.trim().isEmpty()) {
+                                name = categoryId;
+                            }
 
-                    for (DocumentSnapshot document : documents) {
+                            name = name.substring(0, 1).toUpperCase() + name.substring(1);
 
-                        Boolean status = document.getBoolean("status");
-
-                        if (Boolean.FALSE.equals(status)) {
-                            continue;
+                            // Add if not already present
+                            if (!containsCategory(name)) {
+                                addCategoryCard(name, categoryId);
+                            }
                         }
-
-                        String categoryId = document.getId();
-                        String name = document.getString("name");
-
-                        if (name == null || name.trim().isEmpty()) {
-                            name = categoryId;
-                        }
-
-                        name = name.substring(0, 1).toUpperCase()
-                                + name.substring(1);
-
-                        addCategoryCard(name, categoryId);
-                    }
-
-                    if (categoryList.getChildCount() == 0) {
-                        addCategoryCard("Catering", "catering");
-                        addCategoryCard("Dresses", "dresses");
-                        addCategoryCard("Photography", "photography");
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    if (categoryList.getChildCount() == 0) {
-                        addCategoryCard("Catering", "catering");
-                        addCategoryCard("Dresses", "dresses");
-                        addCategoryCard("Photography", "photography");
                     }
                 });
+    }
+
+    private boolean containsCategory(String categoryName) {
+        for (int i = 0; i < categoryList.getChildCount(); i++) {
+            View child = categoryList.getChildAt(i);
+            if (child instanceof LinearLayout) {
+                LinearLayout card = (LinearLayout) child;
+                if (card.getChildCount() > 1 && card.getChildAt(1) instanceof LinearLayout) {
+                    LinearLayout details = (LinearLayout) card.getChildAt(1);
+                    if (details.getChildCount() > 0 && details.getChildAt(0) instanceof TextView) {
+                        TextView title = (TextView) details.getChildAt(0);
+                        if (title.getText().toString().equalsIgnoreCase(categoryName)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private void populateDefaultCategoryCards() {
+        addCategoryCard("Decoration", "decoration");
+        addCategoryCard("Catering", "catering");
+        addCategoryCard("Dresses", "dresses");
+        addCategoryCard("Photography", "photography");
+        addCategoryCard("Music & DJ", "music_dj");
+        addCategoryCard("Venues", "venues");
+        addCategoryCard("Makeup & Hair", "makeup_hair");
+        addCategoryCard("Invitation Cards", "invitation_cards");
     }
 
     private void addCategoryCard(String name, String categoryId) {
@@ -196,25 +208,28 @@ public class UserDashboardActivity extends AppCompatActivity {
     }
 
     private String getCategoryIcon(String name) {
-
-        if (name.equalsIgnoreCase("Catering")) return "🍽️";
-        if (name.equalsIgnoreCase("Dresses")) return "👗";
-        if (name.equalsIgnoreCase("Photography")) return "📷";
-
+        String lower = name.toLowerCase();
+        if (lower.contains("decorat")) return "🎈";
+        if (lower.contains("cater")) return "🍽️";
+        if (lower.contains("dress") || lower.contains("outfit")) return "👗";
+        if (lower.contains("photo") || lower.contains("camera")) return "📷";
+        if (lower.contains("music") || lower.contains("dj")) return "🎧";
+        if (lower.contains("venue") || lower.contains("hall")) return "🏰";
+        if (lower.contains("makeup") || lower.contains("hair")) return "💄";
+        if (lower.contains("invit") || lower.contains("card")) return "💌";
         return "🎉";
     }
 
     private String getCategoryDescription(String name) {
-
-        if (name.equalsIgnoreCase("Catering"))
-            return "Food and catering services";
-
-        if (name.equalsIgnoreCase("Dresses"))
-            return "Find your perfect outfit";
-
-        if (name.equalsIgnoreCase("Photography"))
-            return "Capture your special moments";
-
+        String lower = name.toLowerCase();
+        if (lower.contains("decorat")) return "Stage and venue decoration";
+        if (lower.contains("cater")) return "Food and catering services";
+        if (lower.contains("dress") || lower.contains("outfit")) return "Find your perfect outfit";
+        if (lower.contains("photo") || lower.contains("camera")) return "Capture your special moments";
+        if (lower.contains("music") || lower.contains("dj")) return "Sound system and DJ services";
+        if (lower.contains("venue") || lower.contains("hall")) return "Banquet halls and event spaces";
+        if (lower.contains("makeup") || lower.contains("hair")) return "Bridal makeup and styling";
+        if (lower.contains("invit") || lower.contains("card")) return "Design and print invitations";
         return "Explore event services";
     }
 

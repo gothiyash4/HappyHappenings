@@ -50,10 +50,10 @@ public class UserDashboardActivity extends AppCompatActivity {
             finish();
         });
 
-        bookings.setOnClickListener(v ->
-                Toast.makeText(this, "My Bookings",
-                        Toast.LENGTH_SHORT).show()
-        );
+        bookings.setOnClickListener(v -> {
+            Intent intent = new Intent(this, MyBookingsActivity.class);
+            startActivity(intent);
+        });
     }
 
     private void loadCategories() {

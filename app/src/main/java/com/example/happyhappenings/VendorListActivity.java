@@ -323,15 +323,14 @@ public class VendorListActivity extends AppCompatActivity {
         contactButton.setLayoutParams(contactBtnParams);
 
         contactButton.setOnClickListener(v -> {
-            Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
-            emailIntent.setData(Uri.parse("mailto:" + email));
-            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Booking Inquiry: " + title);
-
-            try {
-                startActivity(Intent.createChooser(emailIntent, "Contact " + vendorName));
-            } catch (Exception e) {
-                Toast.makeText(this, "Vendor Email: " + email, Toast.LENGTH_LONG).show();
-            }
+            Intent bookIntent = new Intent(this, BookServiceActivity.class);
+            bookIntent.putExtra("vendorName", vendorName);
+            bookIntent.putExtra("vendorEmail", email);
+            bookIntent.putExtra("email", email);
+            bookIntent.putExtra("serviceTitle", title);
+            bookIntent.putExtra("category", category);
+            bookIntent.putExtra("price", price);
+            startActivity(bookIntent);
         });
 
         actionsRow.addView(profileButton);
@@ -509,15 +508,14 @@ public class VendorListActivity extends AppCompatActivity {
         contactButton.setLayoutParams(contactBtnParams);
 
         contactButton.setOnClickListener(v -> {
-            Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
-            emailIntent.setData(Uri.parse("mailto:" + email));
-            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Inquiry for " + category + " service");
-
-            try {
-                startActivity(Intent.createChooser(emailIntent, "Contact " + name));
-            } catch (Exception e) {
-                Toast.makeText(this, "Vendor Email: " + email, Toast.LENGTH_LONG).show();
-            }
+            Intent bookIntent = new Intent(this, BookServiceActivity.class);
+            bookIntent.putExtra("vendorName", name);
+            bookIntent.putExtra("vendorEmail", email);
+            bookIntent.putExtra("email", email);
+            bookIntent.putExtra("serviceTitle", category + " Vendor Service");
+            bookIntent.putExtra("category", category);
+            bookIntent.putExtra("price", "Contact for Quote");
+            startActivity(bookIntent);
         });
 
         actionsRow.addView(profileButton);

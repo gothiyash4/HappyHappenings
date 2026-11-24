@@ -56,6 +56,17 @@
         android:backgroundTint="@null"/>
 
     <Button
+        android:id="@+id/vendorBookings"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:text="Booking Requests"
+        android:textColor="#FFFFFF"
+        android:layout_marginTop="12dp"
+        app:backgroundTint="@null"
+        android:background="@drawable/blue_button_bg"
+        android:backgroundTint="@null"/>
+
+    <Button
         android:id="@+id/profile"
         android:layout_width="match_parent"
         android:layout_height="65dp"

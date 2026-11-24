@@ -25,6 +25,7 @@ public class VendorDashboardActivity extends AppCompatActivity {
 
         addService = findViewById(R.id.addService);
         myServices = findViewById(R.id.myServices);
+        Button vendorBookings = findViewById(R.id.vendorBookings);
         profile = findViewById(R.id.profile);
         logout = findViewById(R.id.logout);
 
@@ -38,6 +39,11 @@ public class VendorDashboardActivity extends AppCompatActivity {
 
         myServices.setOnClickListener(v -> {
             Intent intent = new Intent(this, MyServicesActivity.class);
+            startActivity(intent);
+        });
+
+        vendorBookings.setOnClickListener(v -> {
+            Intent intent = new Intent(this, MyBookingsActivity.class);
             startActivity(intent);
         });
 

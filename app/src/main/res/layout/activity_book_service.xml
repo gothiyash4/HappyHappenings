@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F7FC"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <!-- Top Header Bar -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="20dp">
+
+            <TextView
+                android:id="@+id/backButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:text="←"
+                android:textSize="24sp"
+                android:textColor="#172B4D"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginStart="12dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Book Service"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:textColor="#172B4D"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Select date and submit your booking request"
+                    android:textSize="13sp"
+                    android:textColor="#7B8798"
+                    android:layout_marginTop="2dp"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Service Overview Summary Card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/register_card_bg">
+
+            <TextView
+                android:id="@+id/summaryServiceTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Service Package"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:textColor="#172B4D"/>
+
+            <TextView
+                android:id="@+id/summaryVendorName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Vendor Name"
+                android:textSize="13sp"
+                android:textColor="#2563EB"
+                android:layout_marginTop="4dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:id="@+id/summaryCategory"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Category"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:textColor="#2563EB"
+                    android:padding="6dp"
+                    android:background="@drawable/register_input_bg"/>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"/>
+
+                <TextView
+                    android:id="@+id/summaryPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Price"
+                    android:textSize="17sp"
+                    android:textStyle="bold"
+                    android:textColor="#2563EB"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Booking Form Card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp"
+            android:background="@drawable/register_card_bg">
+
+            <!-- Select Event Date -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Select Event Date *"
+                android:textColor="#344054"
+                android:textStyle="bold"
+                android:textSize="13sp"/>
+
+            <EditText
+                android:id="@+id/bookingDateEditText"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:hint="Click to choose date (DD/MM/YYYY)"
+                android:padding="14dp"
+                android:textSize="14sp"
+                android:focusable="false"
+                android:clickable="true"
+                android:background="@drawable/register_input_bg"
+                android:layout_marginTop="7dp"
+                android:layout_marginBottom="20dp"/>
+
+            <!-- Add Note / Special Instructions -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Note / Special Instructions"
+                android:textColor="#344054"
+                android:textStyle="bold"
+                android:textSize="13sp"/>
+
+            <EditText
+                android:id="@+id/bookingNoteEditText"
+                android:layout_width="match_parent"
+                android:layout_height="110dp"
+                android:hint="Write event timing, guest count, or special requirements..."
+                android:padding="14dp"
+                android:textSize="14sp"
+                android:gravity="top|start"
+                android:inputType="textMultiLine"
+                android:background="@drawable/register_input_bg"
+                android:layout_marginTop="7dp"
+                android:layout_marginBottom="24dp"/>
+
+            <!-- Submit Booking Button -->
+            <Button
+                android:id="@+id/confirmBookingButton"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:text="Confirm &amp; Submit Booking"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                app:backgroundTint="@null"
+                android:background="@drawable/blue_button_bg"
+                android:backgroundTint="@null"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

@@ -24,15 +24,35 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        auth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+
+        if (auth.getCurrentUser() != null) {
+            android.content.SharedPreferences prefs = getSharedPreferences("app_prefs", MODE_PRIVATE);
+            String savedRole = prefs.getString("user_role", null);
+
+            if ("user".equals(savedRole)) {
+                Intent intent = new Intent(this, UserDashboardActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
+                return;
+            } else if ("vendor".equals(savedRole)) {
+                Intent intent = new Intent(this, VendorDashboardActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
+                return;
+            }
+        }
+
         setContentView(R.layout.activity_login);
 
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
         login = findViewById(R.id.login);
         signup = findViewById(R.id.signup);
-
-        auth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
 
         if (auth.getCurrentUser() != null) {
             checkUserRoleAndRedirect(auth.getCurrentUser().getUid());
@@ -66,6 +86,11 @@ public class LoginActivity extends AppCompatActivity {
                                         if (document.exists()) {
 
                                             String role = document.getString("role");
+
+                                            getSharedPreferences("app_prefs", MODE_PRIVATE)
+                                                    .edit()
+                                                    .putString("user_role", role)
+                                                    .apply();
 
                                             Intent intent;
 
@@ -123,7 +148,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void checkUserRoleAndRedirect(String uid) {
 
-        login.setEnabled(false);
+        if (login != null) login.setEnabled(false);
 
         db.collection("users")
                 .document(uid)
@@ -134,6 +159,11 @@ public class LoginActivity extends AppCompatActivity {
 
                         String role = document.getString("role");
 
+                        getSharedPreferences("app_prefs", MODE_PRIVATE)
+                                .edit()
+                                .putString("user_role", role)
+                                .apply();
+
                         Intent intent;
 
                         if ("user".equals(role)) {
@@ -141,7 +171,7 @@ public class LoginActivity extends AppCompatActivity {
                         } else if ("vendor".equals(role)) {
                             intent = new Intent(this, VendorDashboardActivity.class);
                         } else {
-                            login.setEnabled(true);
+                            if (login != null) login.setEnabled(true);
                             return;
                         }
 
@@ -154,9 +184,11 @@ public class LoginActivity extends AppCompatActivity {
                         finish();
 
                     } else {
-                        login.setEnabled(true);
+                        if (login != null) login.setEnabled(true);
                     }
                 })
-                .addOnFailureListener(e -> login.setEnabled(true));
+                .addOnFailureListener(e -> {
+                    if (login != null) login.setEnabled(true);
+                });
     }
 }

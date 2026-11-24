@@ -24,8 +24,9 @@ import java.util.Comparator;
 
 public class UserDashboardActivity extends AppCompatActivity {
 
-    Button logout, bookings;
-    LinearLayout categoryList;
+    private Button logout, bookings;
+    private LinearLayout categoryList;
+    private TextView userAvatar, userWelcomeText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,11 +36,15 @@ public class UserDashboardActivity extends AppCompatActivity {
         logout = findViewById(R.id.logout);
         bookings = findViewById(R.id.bookings);
         categoryList = findViewById(R.id.categoryList);
+        userAvatar = findViewById(R.id.userAvatar);
+        userWelcomeText = findViewById(R.id.userWelcomeText);
 
+        loadUserInfo();
         loadCategories();
 
         logout.setOnClickListener(v -> {
 
+            getSharedPreferences("app_prefs", MODE_PRIVATE).edit().clear().apply();
             FirebaseAuth.getInstance().signOut();
 
             Intent intent = new Intent(this, LoginActivity.class);
@@ -54,6 +59,25 @@ public class UserDashboardActivity extends AppCompatActivity {
             Intent intent = new Intent(this, MyBookingsActivity.class);
             startActivity(intent);
         });
+    }
+
+    private void loadUserInfo() {
+        com.google.firebase.auth.FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) return;
+
+        FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(user.getUid())
+                .get()
+                .addOnSuccessListener(document -> {
+                    if (document.exists()) {
+                        String name = document.getString("name");
+                        if (name != null && !name.trim().isEmpty()) {
+                            userWelcomeText.setText("Welcome, " + name + "!");
+                            userAvatar.setText(name.substring(0, 1).toUpperCase());
+                        }
+                    }
+                });
     }
 
     private void loadCategories() {

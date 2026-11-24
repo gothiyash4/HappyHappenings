@@ -114,6 +114,7 @@ public class MyBookingsActivity extends AppCompatActivity {
                     } else {
                         statusTextView.setVisibility(View.GONE);
                         for (DocumentSnapshot bDoc : matchingBookings) {
+                            String bookingId = bDoc.getId();
                             String serviceTitle = bDoc.getString("serviceTitle");
                             String vendorName = bDoc.getString("vendorName");
                             String userName = bDoc.getString("userName");
@@ -124,13 +125,15 @@ public class MyBookingsActivity extends AppCompatActivity {
                             String status = bDoc.getString("status");
 
                             addBookingCard(
+                                    bookingId,
                                     serviceTitle != null ? serviceTitle : "Event Service",
                                     isVendor ? ("Customer: " + (userName != null ? userName : "User")) : ("Vendor: " + (vendorName != null ? vendorName : "Vendor")),
                                     price != null ? price : "N/A",
                                     category != null ? category : "Event",
                                     bookingDate != null ? bookingDate : "Date TBD",
                                     note != null ? note : "No additional notes",
-                                    status != null ? status : "Pending"
+                                    status != null ? status : "Pending",
+                                    isVendor
                             );
                         }
                     }
@@ -141,7 +144,7 @@ public class MyBookingsActivity extends AppCompatActivity {
                 });
     }
 
-    private void addBookingCard(String serviceTitle, String nameInfo, String price, String category, String date, String note, String status) {
+    private void addBookingCard(String bookingId, String serviceTitle, String nameInfo, String price, String category, String date, String note, String status, boolean isVendor) {
 
         LinearLayout card = new LinearLayout(this);
         card.setOrientation(LinearLayout.VERTICAL);
@@ -217,12 +220,21 @@ public class MyBookingsActivity extends AppCompatActivity {
         statusBadge.setText(status);
         statusBadge.setTextSize(11);
         statusBadge.setTypeface(null, Typeface.BOLD);
-        statusBadge.setTextColor(Color.parseColor("#0284C7"));
         statusBadge.setPadding(dp(8), dp(3), dp(8), dp(3));
 
         GradientDrawable statusBg = new GradientDrawable();
-        statusBg.setColor(Color.parseColor("#E0F2FE"));
         statusBg.setCornerRadius(dp(6));
+
+        if ("Accepted".equalsIgnoreCase(status)) {
+            statusBadge.setTextColor(Color.parseColor("#15803D"));
+            statusBg.setColor(Color.parseColor("#DCFCE7"));
+        } else if ("Rejected".equalsIgnoreCase(status)) {
+            statusBadge.setTextColor(Color.parseColor("#B91C1C"));
+            statusBg.setColor(Color.parseColor("#FEE2E2"));
+        } else {
+            statusBadge.setTextColor(Color.parseColor("#0284C7"));
+            statusBg.setColor(Color.parseColor("#E0F2FE"));
+        }
         statusBadge.setBackground(statusBg);
 
         infoRow.addView(nameText);
@@ -264,7 +276,75 @@ public class MyBookingsActivity extends AppCompatActivity {
         card.addView(infoRow);
         card.addView(detailsBox);
 
+        // Vendor Accept / Reject Actions
+        if (isVendor && "Pending".equalsIgnoreCase(status)) {
+            LinearLayout vendorActionsRow = new LinearLayout(this);
+            vendorActionsRow.setOrientation(LinearLayout.HORIZONTAL);
+            LinearLayout.LayoutParams vParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            vParams.topMargin = dp(12);
+            vendorActionsRow.setLayoutParams(vParams);
+
+            TextView acceptBtn = new TextView(this);
+            acceptBtn.setText("Accept Request");
+            acceptBtn.setTextSize(13);
+            acceptBtn.setTypeface(null, Typeface.BOLD);
+            acceptBtn.setTextColor(Color.WHITE);
+            acceptBtn.setGravity(Gravity.CENTER);
+            acceptBtn.setPadding(dp(10), dp(8), dp(10), dp(8));
+
+            GradientDrawable acceptBg = new GradientDrawable();
+            acceptBg.setColor(Color.parseColor("#16A34A"));
+            acceptBg.setCornerRadius(dp(8));
+            acceptBtn.setBackground(acceptBg);
+
+            LinearLayout.LayoutParams acceptParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1);
+            acceptParams.rightMargin = dp(6);
+            acceptBtn.setLayoutParams(acceptParams);
+
+            acceptBtn.setOnClickListener(v -> updateBookingStatus(bookingId, "Accepted"));
+
+            TextView rejectBtn = new TextView(this);
+            rejectBtn.setText("Reject");
+            rejectBtn.setTextSize(13);
+            rejectBtn.setTypeface(null, Typeface.BOLD);
+            rejectBtn.setTextColor(Color.WHITE);
+            rejectBtn.setGravity(Gravity.CENTER);
+            rejectBtn.setPadding(dp(10), dp(8), dp(10), dp(8));
+
+            GradientDrawable rejectBg = new GradientDrawable();
+            rejectBg.setColor(Color.parseColor("#DC2626"));
+            rejectBg.setCornerRadius(dp(8));
+            rejectBtn.setBackground(rejectBg);
+
+            LinearLayout.LayoutParams rejectParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1);
+            rejectParams.leftMargin = dp(6);
+            rejectBtn.setLayoutParams(rejectParams);
+
+            rejectBtn.setOnClickListener(v -> updateBookingStatus(bookingId, "Rejected"));
+
+            vendorActionsRow.addView(acceptBtn);
+            vendorActionsRow.addView(rejectBtn);
+
+            card.addView(vendorActionsRow);
+        }
+
         bookingsListContainer.addView(card);
+    }
+
+    private void updateBookingStatus(String bookingId, String newStatus) {
+        if (bookingId == null || bookingId.isEmpty()) return;
+
+        db.collection("bookings")
+                .document(bookingId)
+                .update("status", newStatus)
+                .addOnSuccessListener(aVoid -> {
+                    android.widget.Toast.makeText(this, "Booking " + newStatus.toLowerCase() + "!", android.widget.Toast.LENGTH_SHORT).show();
+                    loadUserOrVendorBookings();
+                })
+                .addOnFailureListener(e -> android.widget.Toast.makeText(this, "Failed: " + e.getMessage(), android.widget.Toast.LENGTH_SHORT).show());
     }
 
     private int dp(int value) {

@@ -1,5 +1,6 @@
 package com.example.happyhappenings;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -238,21 +239,17 @@ public class RegisterActivity extends AppCompatActivity {
                                             db.collection("vendors").document(uid).set(userData);
                                         }
 
+                                        auth.signOut();
+
                                         Toast.makeText(this,
-                                                "Registration Successful",
+                                                "Registration Successful! Please Log In.",
                                                 Toast.LENGTH_SHORT).show();
 
-                                        name.setText("");
-                                        email.setText("");
-                                        password.setText("");
-
-                                        roleGroup.check(R.id.user);
-
-                                        if (!categoryNames.isEmpty()) {
-                                            vendorCategory.setSelection(0);
-                                        }
-
-                                        register.setEnabled(true);
+                                        Intent intent = new Intent(this, LoginActivity.class);
+                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
+                                                Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                        startActivity(intent);
+                                        finish();
                                     })
                                     .addOnFailureListener(e -> {
 

@@ -8,33 +8,50 @@
     android:padding="20dp"
     android:background="#F5F7FC">
 
-    <!-- Header Section -->
+    <!-- Header Section with Avatar & Greeting -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
+        android:padding="16dp"
+        android:background="@drawable/register_card_bg"
         android:layout_marginBottom="16dp">
+
+        <TextView
+            android:id="@+id/userAvatar"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:text="U"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#2563EB"
+            android:gravity="center"
+            android:background="@drawable/blue_button_bg"
+            android:backgroundTint="#EAF1FF"
+            app:backgroundTint="#EAF1FF"/>
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_marginStart="12dp">
 
             <TextView
+                android:id="@+id/userWelcomeText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Explore Categories"
-                android:textSize="22sp"
+                android:textSize="20sp"
                 android:textStyle="bold"
                 android:textColor="#172B4D"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Find the perfect services for your event"
-                android:textSize="13sp"
+                android:text="Find top event services for your celebration"
+                android:textSize="12sp"
                 android:textColor="#7B8798"
                 android:layout_marginTop="2dp"/>
 

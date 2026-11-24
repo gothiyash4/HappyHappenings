@@ -1,91 +1,277 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="24dp"
-    android:background="#F5F7FC">
+    android:background="#F5F7FC"
+    android:fillViewport="true">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Happy Happenings"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:textColor="#172B4D"/>
+        android:orientation="vertical"
+        android:padding="20dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Vendor Dashboard"
-        android:textSize="14sp"
-        android:textColor="#7B8798"
-        android:layout_marginTop="5dp"/>
+        <!-- Top Header & Profile Banner -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="16dp"
+            android:background="@drawable/register_card_bg"
+            android:layout_marginBottom="20dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Welcome, Vendor!"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        android:textColor="#172B4D"
-        android:layout_marginTop="35dp"
-        android:layout_marginBottom="20dp"/>
+            <TextView
+                android:id="@+id/vendorAvatar"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:text="V"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="#2563EB"
+                android:gravity="center"
+                android:background="@drawable/blue_button_bg"
+                android:backgroundTint="#EAF1FF"
+                app:backgroundTint="#EAF1FF"/>
 
-    <Button
-        android:id="@+id/addService"
-        android:layout_width="match_parent"
-        android:layout_height="65dp"
-        android:text="Add Service"
-        android:textColor="#FFFFFF"
-        app:backgroundTint="@null"
-        android:background="@drawable/blue_button_bg"
-        android:backgroundTint="@null"/>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginStart="14dp">
 
-    <Button
-        android:id="@+id/myServices"
-        android:layout_width="match_parent"
-        android:layout_height="65dp"
-        android:text="My Services"
-        android:textColor="#FFFFFF"
-        android:layout_marginTop="12dp"
-        app:backgroundTint="@null"
-        android:background="@drawable/blue_button_bg"
-        android:backgroundTint="@null"/>
+                <TextView
+                    android:id="@+id/vendorWelcomeText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Welcome, Vendor!"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#172B4D"/>
 
-    <Button
-        android:id="@+id/vendorBookings"
-        android:layout_width="match_parent"
-        android:layout_height="65dp"
-        android:text="Booking Requests"
-        android:textColor="#FFFFFF"
-        android:layout_marginTop="12dp"
-        app:backgroundTint="@null"
-        android:background="@drawable/blue_button_bg"
-        android:backgroundTint="@null"/>
+                <TextView
+                    android:id="@+id/vendorCategoryBadge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Event Service Provider"
+                    android:textSize="12sp"
+                    android:textColor="#2563EB"
+                    android:textStyle="bold"
+                    android:layout_marginTop="3dp"/>
 
-    <Button
-        android:id="@+id/profile"
-        android:layout_width="match_parent"
-        android:layout_height="65dp"
-        android:text="My Profile"
-        android:textColor="#FFFFFF"
-        android:layout_marginTop="12dp"
-        app:backgroundTint="@null"
-        android:background="@drawable/blue_button_bg"
-        android:backgroundTint="@null"/>
+            </LinearLayout>
 
-    <Button
-        android:id="@+id/logout"
-        android:layout_width="match_parent"
-        android:layout_height="54dp"
-        android:text="Logout"
-        android:textColor="#FFFFFF"
-        android:layout_marginTop="30dp"
-        app:backgroundTint="@null"
-        android:background="@drawable/blue_button_bg"
-        android:backgroundTint="@null"/>
+        </LinearLayout>
 
-</LinearLayout>
+        <!-- Section Title -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Vendor Control Center"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#172B4D"
+            android:layout_marginBottom="14dp"/>
+
+        <!-- 2x2 Grid Layout for Action Cards -->
+        <!-- Row 1: Add Service & My Services -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="14dp">
+
+            <!-- Card 1: Add Service -->
+            <LinearLayout
+                android:id="@+id/cardAddService"
+                android:layout_width="0dp"
+                android:layout_height="130dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:gravity="center_vertical"
+                android:layout_marginEnd="7dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@drawable/register_card_bg">
+
+                <TextView
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:text="➕"
+                    android:textSize="20sp"
+                    android:gravity="center"
+                    android:background="@drawable/register_input_bg"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Add Service"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:textColor="#172B4D"
+                    android:layout_marginTop="10dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="List new package"
+                    android:textSize="11sp"
+                    android:textColor="#7B8798"
+                    android:layout_marginTop="2dp"/>
+
+            </LinearLayout>
+
+            <!-- Card 2: My Services -->
+            <LinearLayout
+                android:id="@+id/cardMyServices"
+                android:layout_width="0dp"
+                android:layout_height="130dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:gravity="center_vertical"
+                android:layout_marginStart="7dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@drawable/register_card_bg">
+
+                <TextView
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:text="📦"
+                    android:textSize="20sp"
+                    android:gravity="center"
+                    android:background="@drawable/register_input_bg"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="My Services"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:textColor="#172B4D"
+                    android:layout_marginTop="10dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Edit or remove"
+                    android:textSize="11sp"
+                    android:textColor="#7B8798"
+                    android:layout_marginTop="2dp"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Row 2: Booking Requests & My Profile -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="20dp">
+
+            <!-- Card 3: Booking Requests -->
+            <LinearLayout
+                android:id="@+id/cardBookingRequests"
+                android:layout_width="0dp"
+                android:layout_height="130dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:gravity="center_vertical"
+                android:layout_marginEnd="7dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@drawable/register_card_bg">
+
+                <TextView
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:text="📩"
+                    android:textSize="20sp"
+                    android:gravity="center"
+                    android:background="@drawable/register_input_bg"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Bookings"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:textColor="#172B4D"
+                    android:layout_marginTop="10dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Manage requests"
+                    android:textSize="11sp"
+                    android:textColor="#7B8798"
+                    android:layout_marginTop="2dp"/>
+
+            </LinearLayout>
+
+            <!-- Card 4: My Profile -->
+            <LinearLayout
+                android:id="@+id/cardMyProfile"
+                android:layout_width="0dp"
+                android:layout_height="130dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:gravity="center_vertical"
+                android:layout_marginStart="7dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@drawable/register_card_bg">
+
+                <TextView
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:text="👤"
+                    android:textSize="20sp"
+                    android:gravity="center"
+                    android:background="@drawable/register_input_bg"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="My Profile"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:textColor="#172B4D"
+                    android:layout_marginTop="10dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Account details"
+                    android:textSize="11sp"
+                    android:textColor="#7B8798"
+                    android:layout_marginTop="2dp"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Logout Button -->
+        <Button
+            android:id="@+id/logout"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:text="Logout"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
+            app:backgroundTint="@null"
+            android:background="@drawable/blue_button_bg"
+            android:backgroundTint="@null"/>
+
+    </LinearLayout>
+
+</ScrollView>

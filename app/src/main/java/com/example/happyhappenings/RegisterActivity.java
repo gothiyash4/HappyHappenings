@@ -218,6 +218,7 @@ public class RegisterActivity extends AppCompatActivity {
                             Map<String, Object> userData = new HashMap<>();
 
                             userData.put("uid", uid);
+                            userData.put("vendor_id", uid);
                             userData.put("name", userName);
                             userData.put("email", userEmail);
                             userData.put("role", role);

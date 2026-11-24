@@ -278,6 +278,7 @@ public class AddEditServiceActivity extends AppCompatActivity {
                     serviceData.put("category", finalMainCategory);
                     serviceData.put("subCategory", finalSubCategory);
                     serviceData.put("vendorUid", uid);
+                    serviceData.put("vendor_id", uid);
                     serviceData.put("vendorName", vendorName);
                     serviceData.put("email", userEmail);
                     serviceData.put("vendorEmail", userEmail);

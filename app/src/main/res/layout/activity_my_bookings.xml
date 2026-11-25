@@ -78,12 +78,13 @@
             android:background="@drawable/register_input_bg"
             android:layout_marginBottom="10dp"/>
 
-        <!-- Category & Date Filter Row -->
+        <!-- Category & Status Filter Row 1 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:layout_marginBottom="10dp">
 
             <!-- Category Spinner -->
             <Spinner
@@ -95,11 +96,30 @@
                 android:padding="8dp"
                 android:layout_marginEnd="6dp"/>
 
+            <!-- Status Spinner -->
+            <Spinner
+                android:id="@+id/statusFilterSpinner"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:background="@drawable/register_input_bg"
+                android:padding="8dp"/>
+
+        </LinearLayout>
+
+        <!-- Date Filter & Reset Row 2 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
             <!-- Date Filter Button -->
             <TextView
                 android:id="@+id/dateFilterButton"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="44dp"
+                android:layout_weight="1"
                 android:text="📅 Date: All"
                 android:textSize="12sp"
                 android:textColor="#172B4D"
@@ -122,8 +142,8 @@
                 android:textColor="#2563EB"
                 android:textStyle="bold"
                 android:gravity="center"
-                android:paddingStart="10dp"
-                android:paddingEnd="10dp"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
                 android:clickable="true"
                 android:focusable="true"
                 android:background="@drawable/register_input_bg"/>

@@ -32,7 +32,7 @@ public class MyBookingsActivity extends AppCompatActivity {
 
     private TextView pageTitle, pageSubtitle, statusTextView, dateFilterButton, resetFilterButton;
     private EditText searchFilterEditText;
-    private Spinner categoryFilterSpinner;
+    private Spinner categoryFilterSpinner, statusFilterSpinner;
     private LinearLayout bookingsListContainer;
 
     private FirebaseAuth auth;
@@ -40,9 +40,11 @@ public class MyBookingsActivity extends AppCompatActivity {
 
     private final List<DocumentSnapshot> allBookings = new ArrayList<>();
     private final List<String> categories = new ArrayList<>();
+    private final List<String> statuses = new ArrayList<>();
 
     private String selectedDateFilter = null;
     private String selectedCategoryFilter = "All Categories";
+    private String selectedStatusFilter = "All Statuses";
     private String searchQuery = "";
     private boolean isVendorUser = false;
 
@@ -59,6 +61,7 @@ public class MyBookingsActivity extends AppCompatActivity {
 
         searchFilterEditText = findViewById(R.id.searchFilterEditText);
         categoryFilterSpinner = findViewById(R.id.categoryFilterSpinner);
+        statusFilterSpinner = findViewById(R.id.statusFilterSpinner);
         dateFilterButton = findViewById(R.id.dateFilterButton);
         resetFilterButton = findViewById(R.id.resetFilterButton);
 
@@ -101,6 +104,31 @@ public class MyBookingsActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {}
         });
 
+        // Status Filter Spinner Setup
+        statuses.add("All Statuses");
+        statuses.add("Pending");
+        statuses.add("Accepted");
+        statuses.add("Rejected");
+
+        ArrayAdapter<String> statusAdapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_spinner_item,
+                statuses
+        );
+        statusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        statusFilterSpinner.setAdapter(statusAdapter);
+
+        statusFilterSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedStatusFilter = statuses.get(position);
+                applyFilters();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
         searchFilterEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -124,6 +152,8 @@ public class MyBookingsActivity extends AppCompatActivity {
             dateFilterButton.setText("📅 Date: All");
             categoryFilterSpinner.setSelection(0);
             selectedCategoryFilter = "All Categories";
+            statusFilterSpinner.setSelection(0);
+            selectedStatusFilter = "All Statuses";
             applyFilters();
             Toast.makeText(this, "Filters reset", Toast.LENGTH_SHORT).show();
         });
@@ -227,9 +257,13 @@ public class MyBookingsActivity extends AppCompatActivity {
             String vendorName = doc.getString("vendorName");
             String userName = doc.getString("userName");
             String serviceTitle = doc.getString("serviceTitle");
+            String status = doc.getString("status");
 
             boolean matchesCategory = selectedCategoryFilter.equals("All Categories") ||
                     (category != null && category.equalsIgnoreCase(selectedCategoryFilter));
+
+            boolean matchesStatus = selectedStatusFilter.equals("All Statuses") ||
+                    (status != null && status.equalsIgnoreCase(selectedStatusFilter));
 
             boolean matchesDate = selectedDateFilter == null ||
                     (bookingDate != null && bookingDate.contains(selectedDateFilter));
@@ -240,7 +274,7 @@ public class MyBookingsActivity extends AppCompatActivity {
                     (serviceTitle != null && serviceTitle.toLowerCase().contains(searchQuery)) ||
                     (category != null && category.toLowerCase().contains(searchQuery));
 
-            if (matchesCategory && matchesDate && matchesSearch) {
+            if (matchesCategory && matchesStatus && matchesDate && matchesSearch) {
                 filteredList.add(doc);
             }
         }

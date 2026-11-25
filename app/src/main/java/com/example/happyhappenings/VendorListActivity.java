@@ -300,9 +300,9 @@ public class VendorListActivity extends AppCompatActivity {
 
         profileButton.setOnClickListener(v -> showVendorProfileDialog(vendorName, email, category, "Contact via Email", description));
 
-        // 2. Contact / Book Button
+        // 2. Book Now Button
         TextView contactButton = new TextView(this);
-        contactButton.setText("Book / Contact");
+        contactButton.setText("Book Now");
         contactButton.setTextSize(13);
         contactButton.setTypeface(null, Typeface.BOLD);
         contactButton.setTextColor(Color.WHITE);
@@ -485,9 +485,9 @@ public class VendorListActivity extends AppCompatActivity {
 
         profileButton.setOnClickListener(v -> showVendorProfileDialog(name, email, category, phone, description));
 
-        // 2. Contact Button
+        // 2. Book Button
         TextView contactButton = new TextView(this);
-        contactButton.setText("Contact Vendor");
+        contactButton.setText("Book Vendor");
         contactButton.setTextSize(13);
         contactButton.setTypeface(null, Typeface.BOLD);
         contactButton.setTextColor(Color.WHITE);

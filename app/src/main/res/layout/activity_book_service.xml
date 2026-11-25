@@ -131,6 +131,27 @@
             android:padding="20dp"
             android:background="@drawable/register_card_bg">
 
+            <!-- Event Name -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Event Name *"
+                android:textColor="#344054"
+                android:textStyle="bold"
+                android:textSize="13sp"/>
+
+            <EditText
+                android:id="@+id/eventNameEditText"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:hint="e.g. Rahul &amp; Priya Wedding, Sangeet Night"
+                android:padding="14dp"
+                android:textSize="14sp"
+                android:inputType="textCapWords"
+                android:background="@drawable/register_input_bg"
+                android:layout_marginTop="7dp"
+                android:layout_marginBottom="16dp"/>
+
             <!-- Select Event Date -->
             <TextView
                 android:layout_width="wrap_content"
@@ -151,13 +172,13 @@
                 android:clickable="true"
                 android:background="@drawable/register_input_bg"
                 android:layout_marginTop="7dp"
-                android:layout_marginBottom="20dp"/>
+                android:layout_marginBottom="16dp"/>
 
-            <!-- Add Note / Special Instructions -->
+            <!-- Add Note / Special Instructions / Message -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Add Note / Special Instructions"
+                android:text="Message / Special Instructions"
                 android:textColor="#344054"
                 android:textStyle="bold"
                 android:textSize="13sp"/>
@@ -165,7 +186,7 @@
             <EditText
                 android:id="@+id/bookingNoteEditText"
                 android:layout_width="match_parent"
-                android:layout_height="110dp"
+                android:layout_height="100dp"
                 android:hint="Write event timing, guest count, or special requirements..."
                 android:padding="14dp"
                 android:textSize="14sp"

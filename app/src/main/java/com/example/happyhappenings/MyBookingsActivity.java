@@ -263,23 +263,32 @@ public class MyBookingsActivity extends AppCompatActivity {
 
             for (DocumentSnapshot bDoc : bookings) {
                 String bookingId = bDoc.getId();
+                String eventName = bDoc.getString("eventName");
                 String serviceTitle = bDoc.getString("serviceTitle");
                 String vendorName = bDoc.getString("vendorName");
                 String userName = bDoc.getString("userName");
                 String price = bDoc.getString("price");
                 String category = bDoc.getString("category");
                 String bookingDate = bDoc.getString("bookingDate");
-                String note = bDoc.getString("note");
+                String note = bDoc.getString("message");
+                if (note == null || note.trim().isEmpty()) {
+                    note = bDoc.getString("note");
+                }
                 String status = bDoc.getString("status");
+
+                if (eventName == null || eventName.trim().isEmpty()) {
+                    eventName = (serviceTitle != null ? serviceTitle : "Event") + " Booking";
+                }
 
                 addBookingCard(
                         bookingId,
+                        eventName,
                         serviceTitle != null ? serviceTitle : "Event Service",
                         isVendorUser ? ("Customer: " + (userName != null ? userName : "User")) : ("Vendor: " + (vendorName != null ? vendorName : "Vendor")),
                         price != null ? price : "N/A",
                         category != null ? category : "Event",
                         bookingDate != null ? bookingDate : "Date TBD",
-                        note != null ? note : "No additional notes",
+                        note != null && !note.trim().isEmpty() ? note : "No special message provided",
                         status != null ? status : "Pending",
                         isVendorUser
                 );
@@ -287,7 +296,7 @@ public class MyBookingsActivity extends AppCompatActivity {
         }
     }
 
-    private void addBookingCard(String bookingId, String serviceTitle, String nameInfo, String price, String category, String date, String note, String status, boolean isVendor) {
+    private void addBookingCard(String bookingId, String eventName, String serviceTitle, String nameInfo, String price, String category, String date, String note, String status, boolean isVendor) {
 
         LinearLayout card = new LinearLayout(this);
         card.setOrientation(LinearLayout.VERTICAL);
@@ -308,13 +317,13 @@ public class MyBookingsActivity extends AppCompatActivity {
         cardParams.bottomMargin = dp(14);
         card.setLayoutParams(cardParams);
 
-        // Header Row: Title & Price
+        // Header Row: Event Name & Price
         LinearLayout headerRow = new LinearLayout(this);
         headerRow.setOrientation(LinearLayout.HORIZONTAL);
         headerRow.setGravity(Gravity.CENTER_VERTICAL);
 
         TextView titleText = new TextView(this);
-        titleText.setText(serviceTitle);
+        titleText.setText("🎟️ " + eventName);
         titleText.setTextSize(16);
         titleText.setTextColor(Color.parseColor("#172B4D"));
         titleText.setTypeface(null, Typeface.BOLD);
@@ -334,6 +343,20 @@ public class MyBookingsActivity extends AppCompatActivity {
 
         headerRow.addView(titleText);
         headerRow.addView(priceText);
+
+        // Service Subtitle Row
+        TextView serviceSubText = new TextView(this);
+        serviceSubText.setText("🛍️ Service: " + serviceTitle);
+        serviceSubText.setTextSize(13);
+        serviceSubText.setTextColor(Color.parseColor("#2563EB"));
+        serviceSubText.setTypeface(null, Typeface.BOLD);
+
+        LinearLayout.LayoutParams serviceSubParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        serviceSubParams.topMargin = dp(4);
+        serviceSubText.setLayoutParams(serviceSubParams);
 
         // Info Row: Name & Status
         LinearLayout infoRow = new LinearLayout(this);
@@ -383,7 +406,7 @@ public class MyBookingsActivity extends AppCompatActivity {
         infoRow.addView(nameText);
         infoRow.addView(statusBadge);
 
-        // Details Box (Date & Note)
+        // Details Box (Date & Message)
         LinearLayout detailsBox = new LinearLayout(this);
         detailsBox.setOrientation(LinearLayout.VERTICAL);
         detailsBox.setPadding(dp(12), dp(10), dp(12), dp(10));
@@ -407,7 +430,7 @@ public class MyBookingsActivity extends AppCompatActivity {
         dateText.setTypeface(null, Typeface.BOLD);
 
         TextView noteText = new TextView(this);
-        noteText.setText("📝 Note: " + note);
+        noteText.setText("💬 Message: " + note);
         noteText.setTextSize(12);
         noteText.setTextColor(Color.parseColor("#64748B"));
         noteText.setPadding(0, dp(4), 0, 0);
@@ -416,6 +439,7 @@ public class MyBookingsActivity extends AppCompatActivity {
         detailsBox.addView(noteText);
 
         card.addView(headerRow);
+        card.addView(serviceSubText);
         card.addView(infoRow);
         card.addView(detailsBox);
 

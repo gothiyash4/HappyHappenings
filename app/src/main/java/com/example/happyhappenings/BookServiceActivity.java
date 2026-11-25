@@ -22,7 +22,7 @@ import java.util.Map;
 public class BookServiceActivity extends AppCompatActivity {
 
     private TextView summaryServiceTitle, summaryVendorName, summaryCategory, summaryPrice;
-    private EditText bookingDateEditText, bookingNoteEditText;
+    private EditText eventNameEditText, bookingDateEditText, bookingNoteEditText;
     private Button confirmBookingButton;
 
     private FirebaseAuth auth;
@@ -45,6 +45,7 @@ public class BookServiceActivity extends AppCompatActivity {
         summaryVendorName = findViewById(R.id.summaryVendorName);
         summaryCategory = findViewById(R.id.summaryCategory);
         summaryPrice = findViewById(R.id.summaryPrice);
+        eventNameEditText = findViewById(R.id.eventNameEditText);
         bookingDateEditText = findViewById(R.id.bookingDateEditText);
         bookingNoteEditText = findViewById(R.id.bookingNoteEditText);
         confirmBookingButton = findViewById(R.id.confirmBookingButton);
@@ -102,8 +103,13 @@ public class BookServiceActivity extends AppCompatActivity {
     }
 
     private void submitBooking() {
+        String eventName = eventNameEditText.getText().toString().trim();
         String bookingDate = bookingDateEditText.getText().toString().trim();
         String note = bookingNoteEditText.getText().toString().trim();
+
+        if (eventName.isEmpty()) {
+            eventName = serviceTitle + " Event";
+        }
 
         if (bookingDate.isEmpty()) {
             Toast.makeText(this, "Please select an event date", Toast.LENGTH_SHORT).show();
@@ -120,6 +126,8 @@ public class BookServiceActivity extends AppCompatActivity {
         String userEmail = currentUser.getEmail() != null ? currentUser.getEmail() : "";
         confirmBookingButton.setEnabled(false);
 
+        final String finalEventName = eventName;
+
         // Fetch user's profile name from Firestore
         db.collection("users")
                 .document(userUid)
@@ -131,6 +139,7 @@ public class BookServiceActivity extends AppCompatActivity {
                     }
 
                     Map<String, Object> bookingData = new HashMap<>();
+                    bookingData.put("eventName", finalEventName);
                     bookingData.put("userUid", userUid);
                     bookingData.put("userName", userName);
                     bookingData.put("userEmail", userEmail);
@@ -143,6 +152,7 @@ public class BookServiceActivity extends AppCompatActivity {
                     bookingData.put("price", price);
                     bookingData.put("bookingDate", bookingDate);
                     bookingData.put("note", note);
+                    bookingData.put("message", note);
                     bookingData.put("status", "Pending");
                     bookingData.put("createdAt", System.currentTimeMillis());
 

@@ -1,13 +1,21 @@
 package com.example.happyhappenings;
 
+import android.app.DatePickerDialog;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -17,15 +25,26 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class MyBookingsActivity extends AppCompatActivity {
 
-    private TextView pageTitle, pageSubtitle, statusTextView;
+    private TextView pageTitle, pageSubtitle, statusTextView, dateFilterButton, resetFilterButton;
+    private EditText searchFilterEditText;
+    private Spinner categoryFilterSpinner;
     private LinearLayout bookingsListContainer;
 
     private FirebaseAuth auth;
     private FirebaseFirestore db;
+
+    private final List<DocumentSnapshot> allBookings = new ArrayList<>();
+    private final List<String> categories = new ArrayList<>();
+
+    private String selectedDateFilter = null;
+    private String selectedCategoryFilter = "All Categories";
+    private String searchQuery = "";
+    private boolean isVendorUser = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,12 +57,94 @@ public class MyBookingsActivity extends AppCompatActivity {
         statusTextView = findViewById(R.id.statusTextView);
         bookingsListContainer = findViewById(R.id.bookingsListContainer);
 
+        searchFilterEditText = findViewById(R.id.searchFilterEditText);
+        categoryFilterSpinner = findViewById(R.id.categoryFilterSpinner);
+        dateFilterButton = findViewById(R.id.dateFilterButton);
+        resetFilterButton = findViewById(R.id.resetFilterButton);
+
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
         backButton.setOnClickListener(v -> finish());
 
+        setupFilterControls();
         loadUserOrVendorBookings();
+    }
+
+    private void setupFilterControls() {
+        categories.add("All Categories");
+        categories.add("Decoration");
+        categories.add("Catering");
+        categories.add("Dresses");
+        categories.add("Photography");
+        categories.add("Music & DJ");
+        categories.add("Venues");
+        categories.add("Makeup & Hair");
+        categories.add("Invitation Cards");
+
+        ArrayAdapter<String> catAdapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_spinner_item,
+                categories
+        );
+        catAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        categoryFilterSpinner.setAdapter(catAdapter);
+
+        categoryFilterSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedCategoryFilter = categories.get(position);
+                applyFilters();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
+        searchFilterEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                searchQuery = s.toString().trim().toLowerCase();
+                applyFilters();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+
+        dateFilterButton.setOnClickListener(v -> showDatePickerFilter());
+
+        resetFilterButton.setOnClickListener(v -> {
+            searchFilterEditText.setText("");
+            searchQuery = "";
+            selectedDateFilter = null;
+            dateFilterButton.setText("📅 Date: All");
+            categoryFilterSpinner.setSelection(0);
+            selectedCategoryFilter = "All Categories";
+            applyFilters();
+            Toast.makeText(this, "Filters reset", Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    private void showDatePickerFilter() {
+        final Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                this,
+                (view, selectedYear, selectedMonth, selectedDay) -> {
+                    selectedDateFilter = String.format("%02d/%02d/%04d", selectedDay, selectedMonth + 1, selectedYear);
+                    dateFilterButton.setText("📅 " + selectedDateFilter);
+                    applyFilters();
+                },
+                year, month, day
+        );
+        datePickerDialog.show();
     }
 
     private void loadUserOrVendorBookings() {
@@ -66,9 +167,9 @@ public class MyBookingsActivity extends AppCompatActivity {
                 .get()
                 .addOnSuccessListener(userDoc -> {
                     String role = userDoc.exists() ? userDoc.getString("role") : "user";
-                    boolean isVendor = "vendor".equalsIgnoreCase(role);
+                    isVendorUser = "vendor".equalsIgnoreCase(role);
 
-                    if (isVendor) {
+                    if (isVendorUser) {
                         pageTitle.setText("Booking Requests");
                         pageSubtitle.setText("Incoming event booking requests from customers");
                     } else {
@@ -76,7 +177,7 @@ public class MyBookingsActivity extends AppCompatActivity {
                         pageSubtitle.setText("View your submitted event bookings");
                     }
 
-                    fetchBookingsFromFirestore(uid, userEmail, isVendor);
+                    fetchBookingsFromFirestore(uid, userEmail, isVendorUser);
                 })
                 .addOnFailureListener(e -> fetchBookingsFromFirestore(uid, userEmail, false));
     }
@@ -85,7 +186,7 @@ public class MyBookingsActivity extends AppCompatActivity {
         db.collection("bookings")
                 .get()
                 .addOnSuccessListener(result -> {
-                    List<DocumentSnapshot> matchingBookings = new ArrayList<>();
+                    allBookings.clear();
 
                     if (result != null && !result.isEmpty()) {
                         for (DocumentSnapshot doc : result.getDocuments()) {
@@ -98,50 +199,92 @@ public class MyBookingsActivity extends AppCompatActivity {
                                 boolean isVendorMatch = (uid.equals(bVendorUid) || uid.equals(bVendorId)) ||
                                         (!userEmail.isEmpty() && userEmail.equalsIgnoreCase(bVendorEmail));
                                 if (isVendorMatch) {
-                                    matchingBookings.add(doc);
+                                    allBookings.add(doc);
                                 }
                             } else {
                                 if (uid.equals(bUserUid)) {
-                                    matchingBookings.add(doc);
+                                    allBookings.add(doc);
                                 }
                             }
                         }
                     }
 
-                    if (matchingBookings.isEmpty()) {
-                        statusTextView.setVisibility(View.VISIBLE);
-                        statusTextView.setText(isVendor ? "No booking requests received yet." : "No bookings found. Book a vendor service to get started!");
-                    } else {
-                        statusTextView.setVisibility(View.GONE);
-                        for (DocumentSnapshot bDoc : matchingBookings) {
-                            String bookingId = bDoc.getId();
-                            String serviceTitle = bDoc.getString("serviceTitle");
-                            String vendorName = bDoc.getString("vendorName");
-                            String userName = bDoc.getString("userName");
-                            String price = bDoc.getString("price");
-                            String category = bDoc.getString("category");
-                            String bookingDate = bDoc.getString("bookingDate");
-                            String note = bDoc.getString("note");
-                            String status = bDoc.getString("status");
-
-                            addBookingCard(
-                                    bookingId,
-                                    serviceTitle != null ? serviceTitle : "Event Service",
-                                    isVendor ? ("Customer: " + (userName != null ? userName : "User")) : ("Vendor: " + (vendorName != null ? vendorName : "Vendor")),
-                                    price != null ? price : "N/A",
-                                    category != null ? category : "Event",
-                                    bookingDate != null ? bookingDate : "Date TBD",
-                                    note != null ? note : "No additional notes",
-                                    status != null ? status : "Pending",
-                                    isVendor
-                            );
-                        }
-                    }
+                    applyFilters();
                 })
                 .addOnFailureListener(e -> {
                     statusTextView.setVisibility(View.VISIBLE);
                     statusTextView.setText("Failed to load bookings: " + e.getMessage());
                 });
+    }
+
+    private void applyFilters() {
+        List<DocumentSnapshot> filteredList = new ArrayList<>();
+
+        for (DocumentSnapshot doc : allBookings) {
+
+            String category = doc.getString("category");
+            String bookingDate = doc.getString("bookingDate");
+            String vendorName = doc.getString("vendorName");
+            String userName = doc.getString("userName");
+            String serviceTitle = doc.getString("serviceTitle");
+
+            boolean matchesCategory = selectedCategoryFilter.equals("All Categories") ||
+                    (category != null && category.equalsIgnoreCase(selectedCategoryFilter));
+
+            boolean matchesDate = selectedDateFilter == null ||
+                    (bookingDate != null && bookingDate.contains(selectedDateFilter));
+
+            boolean matchesSearch = searchQuery.isEmpty() ||
+                    (vendorName != null && vendorName.toLowerCase().contains(searchQuery)) ||
+                    (userName != null && userName.toLowerCase().contains(searchQuery)) ||
+                    (serviceTitle != null && serviceTitle.toLowerCase().contains(searchQuery)) ||
+                    (category != null && category.toLowerCase().contains(searchQuery));
+
+            if (matchesCategory && matchesDate && matchesSearch) {
+                filteredList.add(doc);
+            }
+        }
+
+        renderFilteredBookings(filteredList);
+    }
+
+    private void renderFilteredBookings(List<DocumentSnapshot> bookings) {
+        bookingsListContainer.removeAllViews();
+
+        if (bookings.isEmpty()) {
+            statusTextView.setVisibility(View.VISIBLE);
+            if (allBookings.isEmpty()) {
+                statusTextView.setText(isVendorUser ? "No booking requests received yet." : "No bookings found. Book a vendor service to get started!");
+            } else {
+                statusTextView.setText("No bookings match your current filter criteria.");
+            }
+        } else {
+            statusTextView.setVisibility(View.GONE);
+
+            for (DocumentSnapshot bDoc : bookings) {
+                String bookingId = bDoc.getId();
+                String serviceTitle = bDoc.getString("serviceTitle");
+                String vendorName = bDoc.getString("vendorName");
+                String userName = bDoc.getString("userName");
+                String price = bDoc.getString("price");
+                String category = bDoc.getString("category");
+                String bookingDate = bDoc.getString("bookingDate");
+                String note = bDoc.getString("note");
+                String status = bDoc.getString("status");
+
+                addBookingCard(
+                        bookingId,
+                        serviceTitle != null ? serviceTitle : "Event Service",
+                        isVendorUser ? ("Customer: " + (userName != null ? userName : "User")) : ("Vendor: " + (vendorName != null ? vendorName : "Vendor")),
+                        price != null ? price : "N/A",
+                        category != null ? category : "Event",
+                        bookingDate != null ? bookingDate : "Date TBD",
+                        note != null ? note : "No additional notes",
+                        status != null ? status : "Pending",
+                        isVendorUser
+                );
+            }
+        }
     }
 
     private void addBookingCard(String bookingId, String serviceTitle, String nameInfo, String price, String category, String date, String note, String status, boolean isVendor) {
@@ -341,10 +484,10 @@ public class MyBookingsActivity extends AppCompatActivity {
                 .document(bookingId)
                 .update("status", newStatus)
                 .addOnSuccessListener(aVoid -> {
-                    android.widget.Toast.makeText(this, "Booking " + newStatus.toLowerCase() + "!", android.widget.Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Booking " + newStatus.toLowerCase() + "!", Toast.LENGTH_SHORT).show();
                     loadUserOrVendorBookings();
                 })
-                .addOnFailureListener(e -> android.widget.Toast.makeText(this, "Failed: " + e.getMessage(), android.widget.Toast.LENGTH_SHORT).show());
+                .addOnFailureListener(e -> Toast.makeText(this, "Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
     private int dp(int value) {

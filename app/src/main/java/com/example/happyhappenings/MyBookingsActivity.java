@@ -309,6 +309,7 @@ public class MyBookingsActivity extends AppCompatActivity {
                     note = bDoc.getString("note");
                 }
                 String status = bDoc.getString("status");
+                String decisionDate = bDoc.getString("decisionDate");
 
                 if (eventName == null || eventName.trim().isEmpty()) {
                     eventName = (serviceTitle != null ? serviceTitle : "Event") + " Booking";
@@ -324,13 +325,14 @@ public class MyBookingsActivity extends AppCompatActivity {
                         bookingDate != null ? bookingDate : "Date TBD",
                         note != null && !note.trim().isEmpty() ? note : "No special message provided",
                         status != null ? status : "Pending",
+                        decisionDate != null ? decisionDate : "",
                         isVendorUser
                 );
             }
         }
     }
 
-    private void addBookingCard(String bookingId, String eventName, String serviceTitle, String nameInfo, String price, String category, String date, String note, String status, boolean isVendor) {
+    private void addBookingCard(String bookingId, String eventName, String serviceTitle, String nameInfo, String price, String category, String date, String note, String status, String decisionDate, boolean isVendor) {
 
         LinearLayout card = new LinearLayout(this);
         card.setOrientation(LinearLayout.VERTICAL);
@@ -472,6 +474,16 @@ public class MyBookingsActivity extends AppCompatActivity {
         detailsBox.addView(dateText);
         detailsBox.addView(noteText);
 
+        if (decisionDate != null && !decisionDate.trim().isEmpty()) {
+            TextView decisionText = new TextView(this);
+            decisionText.setText("⏱️ Decision Date: " + decisionDate + " (" + status + ")");
+            decisionText.setTextSize(12);
+            decisionText.setTextColor(Color.parseColor("#0284C7"));
+            decisionText.setTypeface(null, Typeface.BOLD);
+            decisionText.setPadding(0, dp(4), 0, 0);
+            detailsBox.addView(decisionText);
+        }
+
         card.addView(headerRow);
         card.addView(serviceSubText);
         card.addView(infoRow);
@@ -538,11 +550,22 @@ public class MyBookingsActivity extends AppCompatActivity {
     private void updateBookingStatus(String bookingId, String newStatus) {
         if (bookingId == null || bookingId.isEmpty()) return;
 
+        long now = System.currentTimeMillis();
+        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault());
+        String formattedDate = sdf.format(new java.util.Date(now));
+
+        java.util.Map<String, Object> updateMap = new java.util.HashMap<>();
+        updateMap.put("status", newStatus);
+        updateMap.put("decision", newStatus);
+        updateMap.put("decisionTimestamp", now);
+        updateMap.put("decisionDate", formattedDate);
+        updateMap.put("updatedAt", now);
+
         db.collection("bookings")
                 .document(bookingId)
-                .update("status", newStatus)
+                .update(updateMap)
                 .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(this, "Booking " + newStatus.toLowerCase() + "!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Booking " + newStatus.toLowerCase() + " on " + formattedDate + "!", Toast.LENGTH_SHORT).show();
                     loadUserOrVendorBookings();
                 })
                 .addOnFailureListener(e -> Toast.makeText(this, "Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());

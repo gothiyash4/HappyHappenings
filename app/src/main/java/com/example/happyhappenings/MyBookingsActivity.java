@@ -32,7 +32,7 @@ public class MyBookingsActivity extends AppCompatActivity {
 
     private TextView pageTitle, pageSubtitle, statusTextView, dateFilterButton, resetFilterButton;
     private EditText searchFilterEditText;
-    private Spinner categoryFilterSpinner, statusFilterSpinner;
+    private Spinner categoryFilterSpinner, statusFilterSpinner, monthFilterSpinner;
     private LinearLayout bookingsListContainer;
 
     private FirebaseAuth auth;
@@ -41,10 +41,12 @@ public class MyBookingsActivity extends AppCompatActivity {
     private final List<DocumentSnapshot> allBookings = new ArrayList<>();
     private final List<String> categories = new ArrayList<>();
     private final List<String> statuses = new ArrayList<>();
+    private final List<String> months = new ArrayList<>();
 
     private String selectedDateFilter = null;
     private String selectedCategoryFilter = "All Categories";
     private String selectedStatusFilter = "All Statuses";
+    private String selectedMonthFilter = "All Months";
     private String searchQuery = "";
     private boolean isVendorUser = false;
 
@@ -62,6 +64,7 @@ public class MyBookingsActivity extends AppCompatActivity {
         searchFilterEditText = findViewById(R.id.searchFilterEditText);
         categoryFilterSpinner = findViewById(R.id.categoryFilterSpinner);
         statusFilterSpinner = findViewById(R.id.statusFilterSpinner);
+        monthFilterSpinner = findViewById(R.id.monthFilterSpinner);
         dateFilterButton = findViewById(R.id.dateFilterButton);
         resetFilterButton = findViewById(R.id.resetFilterButton);
 
@@ -75,6 +78,41 @@ public class MyBookingsActivity extends AppCompatActivity {
     }
 
     private void setupFilterControls() {
+        // Month Filter Spinner Setup
+        months.add("All Months");
+        months.add("January");
+        months.add("February");
+        months.add("March");
+        months.add("April");
+        months.add("May");
+        months.add("June");
+        months.add("July");
+        months.add("August");
+        months.add("September");
+        months.add("October");
+        months.add("November");
+        months.add("December");
+
+        ArrayAdapter<String> monthAdapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_spinner_item,
+                months
+        );
+        monthAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        monthFilterSpinner.setAdapter(monthAdapter);
+
+        monthFilterSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedMonthFilter = months.get(position);
+                applyFilters();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
+        // Category Filter Spinner Setup
         categories.add("All Categories");
         categories.add("Decoration");
         categories.add("Catering");
@@ -154,6 +192,8 @@ public class MyBookingsActivity extends AppCompatActivity {
             selectedCategoryFilter = "All Categories";
             statusFilterSpinner.setSelection(0);
             selectedStatusFilter = "All Statuses";
+            monthFilterSpinner.setSelection(0);
+            selectedMonthFilter = "All Months";
             applyFilters();
             Toast.makeText(this, "Filters reset", Toast.LENGTH_SHORT).show();
         });
@@ -247,6 +287,35 @@ public class MyBookingsActivity extends AppCompatActivity {
                 });
     }
 
+    private String getMonthNameFromBookingDate(String dateStr) {
+        if (dateStr == null || dateStr.trim().isEmpty()) return "";
+        String[] monthNames = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+
+        if (dateStr.contains("/")) {
+            String[] parts = dateStr.split("/");
+            if (parts.length >= 2) {
+                try {
+                    int monthNum = Integer.parseInt(parts[1].trim());
+                    if (monthNum >= 1 && monthNum <= 12) {
+                        return monthNames[monthNum - 1];
+                    }
+                } catch (Exception ignored) {}
+            }
+        }
+        if (dateStr.contains("-")) {
+            String[] parts = dateStr.split("-");
+            if (parts.length >= 2) {
+                try {
+                    int monthNum = Integer.parseInt(parts[1].trim());
+                    if (monthNum >= 1 && monthNum <= 12) {
+                        return monthNames[monthNum - 1];
+                    }
+                } catch (Exception ignored) {}
+            }
+        }
+        return "";
+    }
+
     private void applyFilters() {
         List<DocumentSnapshot> filteredList = new ArrayList<>();
 
@@ -258,6 +327,9 @@ public class MyBookingsActivity extends AppCompatActivity {
             String userName = doc.getString("userName");
             String serviceTitle = doc.getString("serviceTitle");
             String status = doc.getString("status");
+
+            boolean matchesMonth = selectedMonthFilter.equals("All Months") ||
+                    selectedMonthFilter.equalsIgnoreCase(getMonthNameFromBookingDate(bookingDate));
 
             boolean matchesCategory = selectedCategoryFilter.equals("All Categories") ||
                     (category != null && category.equalsIgnoreCase(selectedCategoryFilter));
@@ -274,7 +346,7 @@ public class MyBookingsActivity extends AppCompatActivity {
                     (serviceTitle != null && serviceTitle.toLowerCase().contains(searchQuery)) ||
                     (category != null && category.toLowerCase().contains(searchQuery));
 
-            if (matchesCategory && matchesStatus && matchesDate && matchesSearch) {
+            if (matchesMonth && matchesCategory && matchesStatus && matchesDate && matchesSearch) {
                 filteredList.add(doc);
             }
         }
